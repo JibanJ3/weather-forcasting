@@ -1,0 +1,1023 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aether | Premium Weather Experience</title>
+
+    <meta name="description" content="Experience beautiful live weather forecasts, hourly updates and 7-day weather predictions with Atmos.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<link rel="stylesheet" href="aether-map.css">
+<link rel="stylesheet" href="aether-premium.css">
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        /* Extra visual styles for the enhanced HTML */
+
+        .hero-banner {
+            position: relative;
+            min-height: 270px;
+            overflow: hidden;
+            border-radius: 26px;
+            margin: 15px 0 28px;
+            display: flex;
+            align-items: center;
+            padding: 40px;
+            background: #17213c;
+        }
+
+        .hero-banner > img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .48;
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(8,11,24,.95), rgba(8,11,24,.3));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 560px;
+        }
+
+        .hero-content .eyebrow {
+            color: #67e8f9;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .hero-content h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(30px, 5vw, 48px);
+            margin: 12px 0;
+            line-height: 1.15;
+        }
+
+        .hero-content p {
+            color: #d1d5e5;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .hero-content button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            font-weight: 700;
+        }
+
+        .weather-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .gallery-card {
+            position: relative;
+            height: 190px;
+            overflow: hidden;
+            border-radius: 19px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--card);
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .5s ease;
+        }
+
+        .gallery-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,.8));
+        }
+
+        .gallery-label {
+            position: absolute;
+            z-index: 2;
+            left: 17px;
+            bottom: 16px;
+            color: white;
+        }
+
+        .gallery-label h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+        }
+
+        .gallery-label p {
+            color: #ddd;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .quick-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0 16px;
+        }
+
+        .quick-heading h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 21px;
+        }
+
+        .quick-heading span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .quick-cities {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        .city-card {
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: var(--card);
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .city-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .city-card img {
+            width: 100%;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 11px;
+            margin-bottom: 10px;
+        }
+
+        .city-card strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .city-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .photo-credit {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 12px;
+        }
+
+        .photo-credit a {
+            color: var(--accent);
+        }
+
+        .weather-illustration {
+            position: relative;
+            z-index: 2;
+        }
+
+        .weather-illustration i {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .section-heading {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            margin: 28px 0 16px;
+        }
+
+        @media(max-width: 750px) {
+            .weather-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-card {
+                height: 170px;
+            }
+
+            .quick-cities {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-banner {
+                padding: 25px;
+                min-height: 250px;
+            }
+        }
+
+        @media(max-width: 400px) {
+            .quick-cities {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .city-card {
+                padding: 10px;
+            }
+
+            .city-card img {
+                height: 70px;
+            }
+        }
+    </style>
+    <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<link rel="stylesheet" href="aether-map.css">
+</head>
+
+<body>
+
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <header>
+
+            <div class="logo">
+                <i class="fas fa-cloud-sun"></i>
+                Aether<span>.</span>
+            </div>
+
+            <div class="header-actions">
+
+                <button class="icon-btn" id="locationBtn" title="Use my location">
+                    <i class="fas fa-location-crosshairs"></i>
+                </button>
+
+                <button class="icon-btn" id="themeBtn" title="Change theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- HERO BANNER -->
+
+        <section class="hero-banner">
+
+            <img
+                src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1400"
+                alt="Beautiful mountain landscape">
+
+            <div class="hero-content">
+
+                <span class="eyebrow">
+                    <i class="fas fa-sparkles"></i> Your weather companion
+                </span>
+
+                <h1>Discover the beauty of every forecast.</h1>
+
+                <p>
+                    Explore real-time weather, beautiful skies and
+                    accurate forecasts for cities around the world.
+                </p>
+
+                <button onclick="document.getElementById('cityInput').focus()">
+                    Explore Weather <i class="fas fa-arrow-right"></i>
+                </button>
+
+            </div>
+
+        </section>
+
+        <section id="weatherDashboard">
+    <!-- Your existing weather dashboard content -->
+</section>
+
+
+        <!-- SEARCH -->
+
+        <section class="search-section">
+
+            <div class="search-wrapper">
+
+                <div class="search-box">
+
+                    <i class="fas fa-search"></i>
+
+                    <input
+                        type="text"
+                        id="cityInput"
+                        placeholder="Search city, country..."
+                        autocomplete="off">
+
+                    <button id="searchBtn">
+                        Search
+                    </button>
+
+                </div>
+
+                <div class="suggestions" id="suggestions"></div>
+
+            </div>
+
+        </section>
+
+
+        <main>
+
+            <!-- QUICK CITIES -->
+
+            <div class="quick-heading">
+
+                <h2>Explore popular cities</h2>
+
+                <span>Discover weather around the world</span>
+
+            </div>
+
+            <section class="quick-cities">
+
+                <button class="city-card" onclick="searchCity('Bhubaneswar')">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400"
+                        alt="Bhubaneswar city">
+
+                    <strong>Bhubaneswar</strong>
+                    <span>Odisha, India</span>
+
+                </button>
+
+                <button class="city-card" onclick="searchCity('New Delhi')">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400"
+                        alt="New Delhi">
+
+                    <strong>New Delhi</strong>
+                    <span>India</span>
+
+                </button>
+
+                <button class="city-card" onclick="searchCity('Mumbai')">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400"
+                        alt="Mumbai">
+
+                    <strong>Mumbai</strong>
+                    <span>Maharashtra, India</span>
+
+                </button>
+
+                <button class="city-card" onclick="searchCity('London')">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400"
+                        alt="London">
+
+                    <strong>London</strong>
+                    <span>United Kingdom</span>
+
+                </button>
+
+            </section>
+
+
+            <!-- CURRENT WEATHER AND DETAILS -->
+
+            <div class="main-grid">
+
+                <section class="card current-weather">
+
+                    <div class="weather-top">
+
+                        <div>
+
+                            <div class="location-name">
+                                <i class="fas fa-location-dot"></i>
+                                Live weather
+                            </div>
+
+                            <h2 class="weather-location" id="cityName">
+                                Bhubaneswar
+                            </h2>
+
+                            <p class="weather-date" id="weatherDate">
+                                Loading date...
+                            </p>
+
+                        </div>
+
+                        <div class="unit-toggle">
+
+                            <button id="celsiusBtn" class="active">
+                                °C
+                            </button>
+
+                            <button id="fahrenheitBtn">
+                                °F
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-main">
+
+                        <div>
+
+                            <div class="temperature" id="temperature">
+                                --°
+                            </div>
+
+                            <p class="weather-description" id="weatherDescription">
+                                Loading weather...
+                            </p>
+
+                            <p class="weather-date" id="weatherUpdated">
+                                Updating...
+                            </p>
+
+                        </div>
+
+                        <div class="weather-illustration">
+
+                            <i
+                                class="fas fa-sun"
+                                id="mainWeatherIcon">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="weather-bottom">
+
+                        <div class="weather-info">
+
+                            <span>Feels Like</span>
+                            <strong id="feelsLike">--°</strong>
+
+                        </div>
+
+                        <div class="weather-info">
+
+                            <span>High</span>
+                            <strong id="highTemp">--°</strong>
+
+                        </div>
+
+                        <div class="weather-info">
+
+                            <span>Low</span>
+                            <strong id="lowTemp">--°</strong>
+
+                        </div>
+
+                        <div class="weather-info">
+
+                            <span>Humidity</span>
+                            <strong id="humidity">--%</strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- WEATHER MINI CARDS -->
+
+                <section class="side-details">
+
+                    <div class="mini-card">
+
+                        <div class="mini-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+
+                        <p>Wind Speed</p>
+                        <h3 id="windSpeed">-- km/h</h3>
+                        <small>Current wind</small>
+
+                    </div>
+
+                    <div class="mini-card">
+
+                        <div class="mini-icon">
+                            <i class="fas fa-temperature-high"></i>
+                        </div>
+
+                        <p>Feels Like</p>
+                        <h3 id="feelsLike">--°</h3>
+                        <small>Perceived temperature</small>
+
+                    </div>
+
+                    <div class="mini-card">
+
+                        <div class="mini-icon">
+                            <i class="fas fa-droplet"></i>
+                        </div>
+
+                        <p>Humidity</p>
+                        <h3 id="humidityDetail">--%</h3>
+                        <small>Relative humidity</small>
+
+                    </div>
+
+                    <div class="mini-card">
+
+                        <div class="mini-icon">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+
+                        <p>Cloud Cover</p>
+                        <h3 id="cloudCover">--%</h3>
+                        <small>Sky coverage</small>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+
+<section class="weekly-forecast-section" id="weeklyForecast">
+
+    <div class="section-heading">
+        <div>
+            <span class="section-subtitle">PLAN YOUR WEEK</span>
+            <h2>Upcoming 7 Days Forecast</h2>
+            <p>Stay prepared with the weather ahead.</p>
+        </div>
+
+        <i class="fas fa-calendar-week"></i>
+    </div>
+
+    <div id="dailyForecast" class="daily-forecast">
+        <!-- JavaScript adds the 7 forecast cards here -->
+    </div>
+
+</section>
+
+
+
+
+
+                <!-- WEATHER INSIGHT -->
+
+                <section class="card">
+
+                    <div class="card-title">
+
+                        <div>
+                            <h2>
+                                <i class="fas fa-lightbulb"></i>
+                                Weather Insights
+                            </h2>
+
+                            <p>A little advice for your day</p>
+                        </div>
+
+                    </div>
+
+                    <div class="insight-card">
+
+                        <div class="insight-icon">
+                            <i class="fas fa-cloud-sun"></i>
+                        </div>
+
+                        <div class="insight-content">
+
+                            <h3>Today's Weather Tip</h3>
+
+                            <p id="weatherInsight">
+                                Your personalized weather insights will appear here.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- ADDITIONAL DETAILS -->
+
+            <h2 class="section-heading">
+                More Weather Details
+            </h2>
+
+            <section class="details-grid">
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+
+                    <p>UV Index</p>
+                    <h3 id="uvIndex">--</h3>
+                    <small>Daily maximum</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-gauge-high"></i>
+                    </div>
+
+                    <p>Pressure</p>
+                    <h3 id="pressure">-- hPa</h3>
+                    <small>Atmospheric pressure</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-cloud-rain"></i>
+                    </div>
+
+                    <p>Precipitation</p>
+                    <h3 id="precipitation">-- mm</h3>
+                    <small>Current precipitation</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-compass"></i>
+                    </div>
+
+                    <p>Wind Direction</p>
+                    <h3 id="windDirection">--°</h3>
+                    <small>Wind direction in degrees</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+
+                    <p>Cloud Cover</p>
+                    <h3 id="cloudCover">--%</h3>
+                    <small>Cloud coverage</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-cloud-showers-heavy"></i>
+                    </div>
+
+                    <p>Rain Probability</p>
+                    <h3 id="rainProbability">--%</h3>
+                    <small>Daily maximum chance</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-droplet"></i>
+                    </div>
+
+                    <p>Humidity</p>
+                    <h3 id="humidityDetail">--%</h3>
+                    <small>Relative humidity</small>
+
+                </div>
+
+                <div class="detail-card">
+
+                    <div class="detail-icon">
+                        <i class="fas fa-wind"></i>
+                    </div>
+
+                    <p>Wind Speed</p>
+                    <h3 id="windDetail">-- km/h</h3>
+                    <small>Current wind speed</small>
+
+                </div>
+
+            </section>
+
+
+          
+<!-- AETHER INTERACTIVE WEATHER MAP -->
+<section class="aether-map-section">
+
+    <div class="aether-section-heading">
+        <div>
+            <p class="eyebrow">EXPLORE THE WORLD</p>
+            <h2>Weather <span>Map</span></h2>
+            <p>Search a location above or explore weather anywhere on the map.</p>
+        </div>
+
+        <span class="map-live-badge">● LIVE MAP</span>
+    </div>
+
+    <div class="map-card">
+
+        <div class="map-toolbar">
+            <span>
+                <i class="fa-solid fa-map"></i>
+                Interactive Weather Map
+            </span>
+
+            <div class="map-toolbar-actions">
+                <button id="mapMyLocation" type="button">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    My Location
+                </button>
+
+                <button id="radarToggle" type="button">
+                    <i class="fa-solid fa-cloud-rain"></i>
+                    Recent Radar
+                </button>
+            </div>
+        </div>
+
+        <div id="aetherWeatherMap"></div>
+
+        <div class="map-attribution">
+            Map © OpenStreetMap contributors · Radar ©
+            <a href="https://www.rainviewer.com/"
+               target="_blank"
+               rel="noopener">
+                RainViewer
+            </a>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- AETHER WEATHER ALERT CENTRE -->
+<section class="aether-alert-section">
+
+    <div class="aether-section-heading">
+        <div>
+            <p class="eyebrow">STAY SAFE AND INFORMED</p>
+            <h2>Weather & <span>Disaster Alerts</span></h2>
+            <p>Weather forecast advisories and links to official warnings.</p>
+        </div>
+
+        <span class="alert-heading-icon">
+            <i class="fa-solid fa-bell"></i>
+        </span>
+    </div>
+
+    <div class="alert-grid">
+
+        <article class="alert-card">
+            <div class="alert-card-icon">
+                <i class="fa-solid fa-cloud-bolt"></i>
+            </div>
+
+            <div>
+                <h3>Forecast Heads-up</h3>
+
+                <p id="forecastAlertMessage">
+                    Select a location to check forecast-based weather risks.
+                </p>
+
+                <span class="alert-status" id="forecastAlertStatus">
+                    Waiting for location
+                </span>
+            </div>
+        </article>
+
+        <article class="alert-card official-alert-card">
+            <div class="alert-card-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+                <h3>Official Disaster Warnings</h3>
+
+                <p>
+                    Check verified cyclone, heavy rainfall, thunderstorm and
+                    other disaster warnings from India's official alert portal.
+                </p>
+
+                <a href="https://sachet.ndma.gov.in/"
+                   target="_blank"
+                   rel="noopener"
+                   class="official-alert-link">
+
+                    Open NDMA SACHET
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        </article>
+
+    </div>
+
+    <div class="notification-settings">
+
+        <div>
+            <h3>
+                <i class="fa-solid fa-bell"></i>
+                Browser Notifications
+            </h3>
+
+            <p>
+                Receive forecast-based heads-up notifications while AETHER is open.
+                These are not official disaster warnings.
+            </p>
+
+            <span id="notificationStatus">
+                Notifications are not enabled.
+            </span>
+        </div>
+
+        <button id="enableNotifications" type="button">
+            Enable Notifications
+        </button>
+
+    </div>
+
+    <p class="alert-disclaimer">
+        AETHER forecast advisories are model-based estimates, not official
+        cyclone warnings. Always follow official IMD and NDMA instructions.
+    </p>
+
+</section>
+<div class="forecast-alert green">
+
+    <div class="alert-heading">
+        <i id="forecastAlertIcon" class="fas fa-sun"></i>
+
+        <span id="forecastAlertStatus">
+            LOW RAIN RISK
+        </span>
+    </div>
+
+    <p id="forecastAlertMessage">
+        Checking upcoming rainfall...
+    </p>
+
+    <div class="alert-details">
+        <span>
+            Rain probability:
+            <strong id="alertRainProbability">--</strong>
+        </span>
+
+        <span>
+            Rainfall:
+            <strong id="alertRainAmount">--</strong>
+        </span>
+    </div>
+
+</div>
+
+<div class="forecast-alert green">
+
+    <div class="alert-heading">
+        <i id="forecastAlertIcon" class="fas fa-sun"></i>
+        <span id="forecastAlertStatus">LOW RAIN RISK</span>
+    </div>
+
+    <p id="forecastAlertMessage">
+        Checking upcoming rainfall...
+    </p>
+
+    <div class="alert-details">
+        <span>
+            Rain probability:
+            <strong id="alertRainProbability">--</strong>
+        </span>
+
+        <span>
+            Expected rainfall:
+            <strong id="alertRainAmount">--</strong>
+        </span>
+    </div>
+
+</div>
+<!-- RECENT SEARCHES -->
+
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div>
+                        <h2>
+                            <i class="fas fa-history"></i>
+                            Recent Searches
+                        </h2>
+
+                        <p>Your recently explored cities</p>
+                    </div>
+
+                </div>
+
+                <div class="recent-searches" id="recentSearches">
+
+                    <p class="empty-state">
+                        Your recent searches will appear here.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+          
+
+
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                Made with <strong>♥</strong> by J3
+            </p>
+
+           
+            <p>
+                © 2026 AETHER — Beyond the Forecast.
+            </p>
+
+        </footer>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+    
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="aether-map.js"></script>
+
+
+</body>
+</html>

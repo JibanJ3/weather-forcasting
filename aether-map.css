@@ -1,0 +1,213 @@
+/* =========================================
+   AETHER MAP & ALERT SECTIONS
+========================================= */
+
+.aether-map-section,
+.aether-alert-section {
+    width: min(1180px, 92%);
+    margin: 40px auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Section Heading */
+
+.aether-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.aether-section-heading h2 {
+    margin: 0;
+    font-family: "Outfit", sans-serif;
+    font-size: 23px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.aether-section-heading p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* Map Toolbar */
+
+.map-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.map-toolbar-left,
+.map-toolbar-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Map Container */
+
+.map-container {
+    width: 100%;
+    height: 390px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-sizing: border-box;
+}
+
+#aetherWeatherMap {
+    width: 100%;
+    height: 100%;
+    min-height: 390px;
+    border-radius: 20px;
+    z-index: 1;
+}
+
+/* Map Live Badge */
+
+.map-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 30px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #4ade80;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* =========================================
+   ALERT SECTION
+========================================= */
+
+.alert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+}
+
+.alert-card {
+    min-width: 0;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-sizing: border-box;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.alert-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+}
+
+.alert-card h3 {
+    margin: 0 0 10px;
+    font-family: "Outfit", sans-serif;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.alert-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Notification Settings */
+
+.notification-settings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    width: 100%;
+    margin-top: 20px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-sizing: border-box;
+}
+
+.notification-settings h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.notification-settings p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 900px) {
+    .alert-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .map-container,
+    #aetherWeatherMap {
+        height: 340px;
+        min-height: 340px;
+    }
+}
+
+@media (max-width: 600px) {
+    .aether-map-section,
+    .aether-alert-section {
+        width: 92%;
+        margin: 28px auto;
+    }
+
+    .aether-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .aether-section-heading h2 {
+        font-size: 20px;
+    }
+
+    .map-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .map-container,
+    #aetherWeatherMap {
+        height: 280px;
+        min-height: 280px;
+    }
+
+    .alert-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .notification-settings {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
